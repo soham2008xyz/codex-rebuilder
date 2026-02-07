@@ -1,0 +1,15 @@
+# Build artifacts
+Codex_Intel.app/
+temp_build/
+native_build_temp/
+resources/
+package.json
+package-lock.json
+
+# Downloaded binaries
+*.zip
+*.dmg
+
+# Node
+node_modules/
+.DS_Store

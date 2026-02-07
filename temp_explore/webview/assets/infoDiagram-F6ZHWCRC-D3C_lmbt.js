@@ -1,0 +1,3 @@
+import{a2 as e,a9 as s,aE as n,aa as i,aF as p}from"./index-3Lu2GYf3.js";import{p as g}from"./treemap-KMMF4GRG-DY8POZ8s.js";import"./_baseUniq-CPyLZqZ_.js";import"./_basePickBy-CgmjXEP0.js";import"./clone-DXnNdYLK.js";var v={parse:e(async a=>{const r=await g("info",a);s.debug(r)},"parse")},d={version:p.version+""},m=e(()=>d.version,"getVersion"),c={getVersion:m},f=e((a,r,o)=>{s.debug(`rendering info diagram
+`+a);const t=n(r);i(t,100,400,!0),t.append("g").append("text").attr("x",100).attr("y",40).attr("class","version").attr("font-size",32).style("text-anchor","middle").text(`v${o}`)},"draw"),l={draw:f},E={parser:v,db:c,renderer:l};export{E as diagram};
+//# sourceMappingURL=infoDiagram-F6ZHWCRC-D3C_lmbt.js.map
