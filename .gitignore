@@ -1,6 +1,7 @@
 # Build artifacts
 Codex_Intel.app/
 temp_build/
+temp_explore/
 native_build_temp/
 resources/
 package.json
