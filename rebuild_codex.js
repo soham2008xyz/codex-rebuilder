@@ -303,6 +303,23 @@ async function main() {
         const targetBinCodex = path.join(binDir, 'codex');
         fs.copyFileSync(sourceCodexBin, targetBinCodex);
         fs.chmodSync(targetBinCodex, '755');
+
+        // Copy rg (ripgrep)
+        const sourceRgBin = path.join(CODEX_CLI_PATH, 'vendor/x86_64-apple-darwin/path/rg');
+        if (fs.existsSync(sourceRgBin)) {
+            const targetBinRg = path.join(binDir, 'rg');
+            console.log(`Copying ${sourceRgBin} to ${targetBinRg}`);
+            fs.copyFileSync(sourceRgBin, targetBinRg);
+            fs.chmodSync(targetBinRg, '755');
+
+            // Also copy to root resources if needed (mirroring codex behavior just in case)
+            const targetRgResource = path.join(targetResources, 'rg');
+            fs.copyFileSync(sourceRgBin, targetRgResource);
+            fs.chmodSync(targetRgResource, '755');
+        } else {
+            console.warn(`WARNING: Could not find local x64 rg binary at ${sourceRgBin}`);
+        }
+
     } else {
         console.warn(`WARNING: Could not find local x64 Codex binary`);
     }
