@@ -293,6 +293,22 @@ async function main() {
         console.warn(`WARNING: Could not find local x64 Codex binary`);
     }
 
+    // 8. Fix Timestamps
+    console.log("Fixing app timestamps...");
+    run(`touch "${targetApp}"`);
+
+    // Fix creation date using SetFile if available (macOS specific)
+    try {
+        const now = new Date();
+        // Format: MM/DD/YYYY hh:mm:ss
+        const p = (n) => n.toString().padStart(2, '0');
+        const dateStr = `${p(now.getMonth() + 1)}/${p(now.getDate())}/${now.getFullYear()} ${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+        console.log(`Setting creation date to ${dateStr}...`);
+        execSync(`SetFile -d "${dateStr}" "${targetApp}"`, { stdio: 'inherit' });
+    } catch (e) {
+        console.warn("SetFile failed or not available (this is normal on non-macOS or minimal envs). Creation date might be old.");
+    }
+
     console.log("Done! Codex_Intel.app is ready at " + targetApp);
 }
 
