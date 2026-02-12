@@ -296,12 +296,19 @@ exec "$DIR/Codex.orig" --no-sandbox "$@"
 
     // 7. Copy Codex Binary
     console.log("Copying Codex x64 binary...");
-    const localCodexBinStr = path.join(CODEX_CLI_PATH, 'vendor/x86_64-apple-darwin/codex/codex');
-    // Also check previous location just in case
 
-    let sourceCodexBin = localCodexBinStr;
+    // Dynamically find codex binary inside CLI path
+    let sourceCodexBin = null;
+    try {
+        const findCodex = execSync(`find "${CODEX_CLI_PATH}" -name codex -type f | grep "x86_64" | head -n 1`, { encoding: 'utf8' }).trim();
+        if (findCodex && fs.existsSync(findCodex)) {
+            sourceCodexBin = findCodex;
+        }
+    } catch (e) {
+        console.warn("Error searching for codex binary:", e.message);
+    }
 
-    if (fs.existsSync(sourceCodexBin)) {
+    if (sourceCodexBin) {
         const targetCodexBin = path.join(targetResources, 'codex');
         console.log(`Copying ${sourceCodexBin} to ${targetCodexBin}`);
         fs.copyFileSync(sourceCodexBin, targetCodexBin);
@@ -316,8 +323,18 @@ exec "$DIR/Codex.orig" --no-sandbox "$@"
         fs.chmodSync(targetBinCodex, '755');
 
         // Copy rg (ripgrep)
-        const sourceRgBin = path.join(CODEX_CLI_PATH, 'vendor/x86_64-apple-darwin/path/rg');
-        if (fs.existsSync(sourceRgBin)) {
+        let sourceRgBin = null;
+        try {
+            // Find 'rg' binary inside CLI path, prioritize x86_64
+            const findRg = execSync(`find "${CODEX_CLI_PATH}" -name rg -type f | grep "x86_64" | head -n 1`, { encoding: 'utf8' }).trim();
+            if (findRg && fs.existsSync(findRg)) {
+                sourceRgBin = findRg;
+            }
+        } catch (e) {
+            console.warn("Error searching for rg binary:", e.message);
+        }
+
+        if (sourceRgBin) {
             const targetBinRg = path.join(binDir, 'rg');
             console.log(`Copying ${sourceRgBin} to ${targetBinRg}`);
             fs.copyFileSync(sourceRgBin, targetBinRg);
@@ -328,11 +345,11 @@ exec "$DIR/Codex.orig" --no-sandbox "$@"
             fs.copyFileSync(sourceRgBin, targetRgResource);
             fs.chmodSync(targetRgResource, '755');
         } else {
-            console.warn(`WARNING: Could not find local x64 rg binary at ${sourceRgBin}`);
+            console.warn(`WARNING: Could not find local x86_64 rg binary in ${CODEX_CLI_PATH}`);
         }
 
     } else {
-        console.warn(`WARNING: Could not find local x64 Codex binary`);
+        console.warn(`WARNING: Could not find local x64 Codex binary. Checked: ${potentialCodexPaths.join(', ')}`);
     }
 
     // 8. Fix Timestamps
