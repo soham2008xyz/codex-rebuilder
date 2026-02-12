@@ -231,7 +231,9 @@ async function main() {
         npm_config_target_arch: 'x64',
         npm_config_dist_url: 'https://electronjs.org/headers',
         npm_config_runtime: 'electron',
-        npm_config_build_from_source: 'true'
+        npm_config_build_from_source: 'true',
+        // Force C++20 for Electron 40 compatibility (fixes source_location error)
+        CXXFLAGS: '-std=c++20 -stdlib=libc++'
     };
 
     console.log("Running npm install with electron environment...");

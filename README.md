@@ -63,6 +63,22 @@ network_access = true
 
 ## Troubleshooting
 
+- **"Operation not permitted"**:
+  - The app is self-signed/unsigned. You must remove the quarantine attribute:
+    ```bash
+    xattr -cr Codex_Intel.app
+    ```
+  - If Playwright or other tools fail, ensure you are running the app via the wrapper `Contents/MacOS/Codex` (which the `.app` bundle does by default) which adds `--no-sandbox`.
+
+- **Build Failures (Native Modules)**:
+  - If you see errors about `source_location` or C++ compilation during `npm install`:
+    - Ensure your Xcode Command Line Tools are up to date (Xcode 15+ recommended for C++20 support).
+    - The build script attempts to force C++20 mode (`-std=c++20`), which requires a modern compiler.
+    - Try running `xcode-select --install` to update your tools.
+
+- **"Could not find local x64 Codex binary"**:
+  - The script now searches dynamically for the `codex` binary. Ensure you have the latest version of `@openai/codex` installed globally.
+  - Run `npm list -g @openai/codex` to verify installation path.
 -   **Blank Window**: Usually means the executable name doesn't match `Info.plist`. The script handles this via a wrapper at `Contents/MacOS/Codex` that launches `Codex.orig`.
 -   **Missing Binary**: Ensure the Codex CLI is installed globally (`npm install -g @openai/codex`).
 -   **No Network in Terminal**: Set `network_access = true` in your Codex `config.toml` (see Security Note above).
