@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build Codex.app
-    runs-on: macos-13 # Explicitly use Intel-based macOS runner
+    runs-on: macos-15-intel # Explicitly use Intel-based macOS runner
 
     steps:
       - name: Checkout Repository
