@@ -27,9 +27,14 @@ jobs:
       - name: Install & Build
         run: make build
 
+      - name: Move Build Artifact
+        run: |
+          mkdir Codex
+          mv Codex.app Codex
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v6
         with:
           name: Codex.app
-          path: Codex.app
+          path: Codex
           if-no-files-found: error
