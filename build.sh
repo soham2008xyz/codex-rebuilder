@@ -42,8 +42,13 @@ node rebuild_codex.js
 if [ -d "Codex_Intel.app" ]; then
     echo "Fixing permissions (clearing quarantine)..."
     xattr -cr Codex_Intel.app
-    echo "Build complete! You can now run: open Codex_Intel.app"
 else
     echo "Error: Codex_Intel.app was not created."
     exit 1
 fi
+
+# 6. Rename output
+echo "Renaming Codex_Intel.app to Codex.app..."
+rm -rf Codex.app
+mv Codex_Intel.app Codex.app
+echo "Build complete! You can now run: open Codex.app"
