@@ -1,5 +1,6 @@
 # Build artifacts
 Codex_Intel.app/
+Codex.app/
 temp_build/
 temp_explore/
 native_build_temp/
