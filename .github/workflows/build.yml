@@ -1,0 +1,32 @@
+name: Build Codex App (Intel)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Codex.app
+    runs-on: macos-13 # Explicitly use Intel-based macOS runner
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install & Build
+        run: make build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Codex.app
+          path: Codex.app
+          if-no-files-found: error
