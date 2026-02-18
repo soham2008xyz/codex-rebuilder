@@ -6,7 +6,7 @@ build:
 
 # Clean up build artifacts and downloads
 clean:
-	rm -rf Codex.app Codex_Intel.app Codex.dmg
+	rm -rf Codex.app Codex_Intel.app Codex.dmg electron*.zip package.json package-lock.json resources/ temp_build/ native_build_temp/ native_temp_build/
 
 # Install the app to /Applications
 install:
