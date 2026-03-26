@@ -39,12 +39,11 @@ jobs:
           echo "Using mount point: $MOUNT_POINT"
 
           cleanup() {
-            # If something is mounted on the mountpoint, try to detach it
-            if mount | grep "on $MOUNT_POINT " > /dev/null 2>&1; then
-              echo "Detaching DMG from $MOUNT_POINT..."
-              hdiutil detach "$MOUNT_POINT" > /dev/null 2>&1 || \
-                hdiutil detach -force "$MOUNT_POINT" > /dev/null 2>&1 || true
-            fi
+            # Always attempt to detach – avoids the /tmp -> /private/tmp symlink
+            # mismatch on macOS that makes "mount | grep" miss the mounted volume.
+            echo "Detaching DMG from $MOUNT_POINT..."
+            hdiutil detach "$MOUNT_POINT" > /dev/null 2>&1 || \
+              hdiutil detach -force "$MOUNT_POINT" > /dev/null 2>&1 || true
             # Remove the temporary mountpoint directory if it still exists
             if [ -d "$MOUNT_POINT" ]; then
               rmdir "$MOUNT_POINT" 2>/dev/null || true
