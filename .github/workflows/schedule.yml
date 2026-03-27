@@ -115,7 +115,7 @@ jobs:
             --notes "Intel (x64) build of Codex app version $VERSION."
 
       - name: Update Cask
-        if: steps.check_release.outputs.exists != 'true'
+        if: steps.check_release.outputs.exists != 'true' && github.ref_name == github.event.repository.default_branch
         env:
           VERSION: ${{ steps.extract_version.outputs.version }}
         run: |
@@ -131,4 +131,4 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Casks/codex-intel.rb
           git commit -m "chore: update cask for ${VERSION}" || echo "No changes to commit"
-          git push
+          git push origin HEAD:${{ github.event.repository.default_branch }}
