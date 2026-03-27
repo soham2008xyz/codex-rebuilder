@@ -23,15 +23,24 @@ elif [ -n "${GITHUB_REPOSITORY:-}" ]; then
 else
     TAP_NAME="local/$(basename "$REPO_DIR")"
 fi
-# Register the local repo as a Homebrew tap so cask names can be used
-echo "Setting up tap: $TAP_NAME -> $REPO_DIR"
-brew tap "$TAP_NAME" "$REPO_DIR"
+# Register the local repo as a Homebrew tap so cask names can be used.
+# Track whether the tap already existed so cleanup can avoid removing a
+# pre-existing tap that belongs to the user or CI environment.
+CASK_REF="$TAP_NAME/$CASK_TOKEN"
+TAP_CREATED=false
+if brew tap | grep -qx "$TAP_NAME"; then
+    echo "Tap $TAP_NAME already exists; reusing it."
+else
+    echo "Setting up tap: $TAP_NAME -> $REPO_DIR"
+    brew tap "$TAP_NAME" "$REPO_DIR"
+    TAP_CREATED=true
+fi
 
 # Cleanup function to run on exit, ensuring no state is left behind
 cleanup() {
-    if brew list --cask "$CASK_TOKEN" &>/dev/null; then
-        echo "Cleanup: uninstalling $CASK_TOKEN..."
-        brew uninstall --cask "$CASK_TOKEN" || true
+    if brew list --cask "$CASK_REF" &>/dev/null; then
+        echo "Cleanup: uninstalling $CASK_REF..."
+        brew uninstall --cask "$CASK_REF" || true
     fi
     if [ -d "/Applications/$APP_NAME" ]; then
         echo "Cleanup: removing /Applications/$APP_NAME..."
@@ -41,14 +50,16 @@ cleanup() {
         echo "Cleanup: removing ~/Applications/$APP_NAME..."
         rm -rf "$HOME/Applications/$APP_NAME" || true
     fi
-    brew untap "$TAP_NAME" || true
+    if [ "$TAP_CREATED" = true ]; then
+        brew untap "$TAP_NAME" || true
+    fi
 }
 trap cleanup EXIT
 
 # 1. Syntax Validation (brew audit)
 echo "[1/4] Auditing syntax with brew..."
 # Strict audit checks for syntax and basic style issues
-if ! brew audit --cask --strict "$CASK_TOKEN"; then
+if ! brew audit --cask --strict "$CASK_REF"; then
     echo "Audit failed"
     exit 1
 fi
@@ -56,7 +67,7 @@ echo "Audit passed."
 
 # 2. Test Installation
 echo "[2/4] Testing installation..."
-if ! brew install --cask "$CASK_TOKEN"; then
+if ! brew install --cask "$CASK_REF"; then
     echo "Install failed"
     exit 1
 fi
@@ -74,7 +85,7 @@ fi
 
 # 3. Test Uninstallation
 echo "[3/4] Testing uninstallation..."
-if ! brew uninstall --cask "$CASK_TOKEN"; then
+if ! brew uninstall --cask "$CASK_REF"; then
     echo "Uninstall failed"
     exit 1
 fi
