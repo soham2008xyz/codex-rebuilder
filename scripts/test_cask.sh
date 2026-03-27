@@ -26,12 +26,12 @@ fi
 
 # Verify if it was installed successfully
 # By default, Homebrew Casks install to /Applications or ~/Applications
-if [ -d "/Applications/Codex.app" ]; then
-    echo "Installation verified: /Applications/Codex.app exists."
-elif [ -d "$HOME/Applications/Codex.app" ]; then
-    echo "Installation verified: ~/Applications/Codex.app exists."
+if [ -d "/Applications/$APP_NAME" ]; then
+    echo "Installation verified: /Applications/$APP_NAME exists."
+elif [ -d "$HOME/Applications/$APP_NAME" ]; then
+    echo "Installation verified: ~/Applications/$APP_NAME exists."
 else
-    echo "Installation failed: Codex.app not found in /Applications or ~/Applications"
+    echo "Installation failed: $APP_NAME not found in /Applications or ~/Applications"
     exit 1
 fi
 
