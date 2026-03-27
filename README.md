@@ -17,13 +17,13 @@ This project allows you to port the official Arm64 (Apple Silicon) Codex Desktop
 Run the rebuild script:
 
 ```bash
-node rebuild_codex.js
+node scripts/rebuild_codex.js
 ```
 
 For a fully clean build (removes all cached and transient files first):
 
 ```bash
-node rebuild_codex.js --clean
+node scripts/rebuild_codex.js --clean
 ```
 
 This script will:
@@ -56,7 +56,7 @@ To update:
 1.  Download the new `Codex.dmg` from OpenAI.
 2.  Replace the old `Codex.dmg` in this folder.
 3.  If the Codex CLI also updated, run `npm update -g @openai/codex`.
-4.  Run `node rebuild_codex.js --clean` to ensure a fresh build with the new files.
+4.  Run `node scripts/rebuild_codex.js --clean` to ensure a fresh build with the new files.
 
 ## Security Note
 

@@ -4,8 +4,14 @@ const { execSync } = require('child_process');
 const os = require('os');
 
 // Configuration
-const REPO_ROOT = __dirname;
-const MOUNT_POINT = '/Volumes/CodexMount';
+const REPO_ROOT = path.join(__dirname, "..");
+const MOUNT_POINT = path.join(
+    os.tmpdir(),
+    'codex_mount_' +
+        Date.now().toString(36) +
+        '_' +
+        Math.random().toString(36).slice(2)
+);
 const DMG_PATH = path.join(REPO_ROOT, 'Codex.dmg');
 const TEMP_DIR = path.join(REPO_ROOT, 'temp_build');
 const FINAL_APP_PATH = path.join(REPO_ROOT, 'Codex_Intel.app');
@@ -82,19 +88,18 @@ async function main() {
         console.log(`Missing resources (${missingResources.join(', ')}). Mounting DMG...`);
 
         let mounted = false;
-        if (!fs.existsSync(MOUNT_POINT)) {
-            // Check if already mounted by user?
-            try {
-                // Try to mount
-                run(`hdiutil attach "${DMG_PATH}" -nobrowse -mountpoint "${MOUNT_POINT}"`);
-                mounted = true;
-            } catch (e) {
-                console.log("Mount failed or already mounted. Checking...");
-            }
-        } else {
-            console.log("Mount point exists, assuming mounted.");
+        // Create mount directory lazily, right before attaching
+        try {
+            fs.mkdirSync(MOUNT_POINT);
+            // Try to mount
+            run(`hdiutil attach "${DMG_PATH}" -nobrowse -mountpoint "${MOUNT_POINT}"`);
             mounted = true;
-            // If strictly it's just a folder, we might fail, but let's assume valid mount or previous run leftover
+        } catch (e) {
+            console.log("Mount failed or already mounted. Checking...");
+            // Clean up the empty directory if mount failed
+            if (fs.existsSync(MOUNT_POINT)) {
+                try { fs.rmSync(MOUNT_POINT, { recursive: true, force: true }); } catch (_) {}
+            }
         }
 
         try {
@@ -134,9 +139,15 @@ async function main() {
             }
         } finally {
             if (mounted) {
-                // Try to detach, don't fail if busy
+                // Try to detach; only remove the directory after successful detach
+                // to avoid masking a still-mounted volume if detach fails
                 try {
-                    run(`hdiutil detach "${MOUNT_POINT}"`);
+                    execSync(`hdiutil detach -force "${MOUNT_POINT}"`);
+                    try {
+                        fs.rmSync(MOUNT_POINT, { recursive: true, force: true });
+                    } catch (e) {
+                        console.warn("Failed to cleanup temp mount point:", e);
+                    }
                 } catch (e) {
                     console.warn("Failed to unmount, ignoring.");
                 }
