@@ -2,6 +2,7 @@
 
 [![Scheduled Build Codex App (Intel)](https://github.com/soham2008xyz/codex-intel/actions/workflows/schedule.yml/badge.svg)](https://github.com/soham2008xyz/codex-intel/actions/workflows/schedule.yml)
 [![Test Homebrew Cask](https://github.com/soham2008xyz/codex-intel/actions/workflows/test.yml/badge.svg)](https://github.com/soham2008xyz/codex-intel/actions/workflows/test.yml)
+[![Latest Release](https://img.shields.io/github/v/release/soham2008xyz/codex-intel?display_name=tag)](https://github.com/soham2008xyz/codex-intel/releases/latest)
 
 This repository ships an unofficial Homebrew cask tap for installing Codex on Intel Macs.
 
