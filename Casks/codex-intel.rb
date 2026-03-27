@@ -7,6 +7,8 @@ cask "codex-intel" do
   desc "Intel port of the official Codex Desktop App"
   homepage "https://github.com/soham2008xyz/codex-rebuilder"
 
+  conflicts_with cask: "codex"
+
   app "Codex.app"
 
   zap trash: [
