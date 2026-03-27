@@ -113,3 +113,23 @@ jobs:
           gh release create "$TAG" Codex-Intel.zip \
             --title "$TITLE" \
             --notes "Intel (x64) build of Codex app version $VERSION."
+
+      - name: Update Cask
+        if: steps.check_release.outputs.exists != 'true'
+        env:
+          VERSION: ${{ steps.extract_version.outputs.version }}
+        run: |
+          # Calculate the SHA256 of the new zip file
+          SHA256=$(shasum -a 256 Codex-Intel.zip | awk '{ print $1 }')
+
+          # Update the cask file
+          sed -i '' -e "s/version \".*\"/version \"$VERSION\"/" Casks/codex-intel.rb
+          sed -i '' -e "s/sha256 \".*\"/sha256 \"$SHA256\"/" Casks/codex-intel.rb
+
+          # Commit the changes
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/codex-intel.rb
+          git commit -m "chore: update cask for ${VERSION}" || echo "No changes to commit"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git push
