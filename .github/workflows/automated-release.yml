@@ -57,17 +57,17 @@ jobs:
         id: cache-dmg
         uses: actions/cache@v4
         with:
-          path: ~/Codex.dmg
-          key: dmg-cache-${{ hashFiles('~/Codex.dmg') }}
+          path: Codex.dmg
+          key: dmg-cache-${{ hashFiles('Codex.dmg') }}
 
       - name: Download Latest Codex.dmg
         id: download
         run: |
           echo "Downloading latest Codex.dmg..."
-          curl -L -o ~/Codex.dmg "https://persistent.oaistatic.com/codex-app-prod/Codex.dmg"
+          curl -L -o Codex.dmg "https://persistent.oaistatic.com/codex-app-prod/Codex.dmg"
 
           # Calculate SHA256 hash
-          DMG_HASH=$(shasum -a 256 ~/Codex.dmg | cut -d' ' -f1)
+          DMG_HASH=$(shasum -a 256 Codex.dmg | cut -d' ' -f1)
           echo "Downloaded DMG SHA256: $DMG_HASH"
           echo "dmg_hash=$DMG_HASH" >> $GITHUB_OUTPUT
 
