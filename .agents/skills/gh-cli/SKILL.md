@@ -1615,9 +1615,7 @@ gh codespace stop
 gh codespace delete
 
 # View logs
-gh codespace logs
-
---tail 100
+gh codespace logs --tail 100
 
 # View ports
 gh codespace ports
