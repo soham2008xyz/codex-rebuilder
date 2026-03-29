@@ -116,7 +116,7 @@ jobs:
 
           # Extract version from Info.plist
           CODEX_VERSION=$(defaults read /Volumes/CodexTemp/Codex.app/Contents/Info.plist CFBundleShortVersionString 2>/dev/null || echo "unknown")
-          ELECTRON_VERSION=$(defaults read /Volume/CodexTemp/Codex.app/Contents/Info.plist CFBundleExecutable 2>/dev/null || echo "unknown")
+          ELECTRON_VERSION=$(defaults read /Volumes/CodexTemp/Codex.app/Contents/Info.plist CFBundleVersion 2>/dev/null || echo "unknown")
 
           hdiutil detach /Volumes/CodexTemp
 
