@@ -7,7 +7,7 @@ cask "codex-intel" do
   desc "Intel port of the official Codex Desktop App"
   homepage "https://github.com/soham2008xyz/codex-intel"
 
-  conflicts_with cask: "codex"
+  conflicts_with cask: "codex-app"
 
   app "Codex.app"
 
